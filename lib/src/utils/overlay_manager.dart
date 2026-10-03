@@ -111,9 +111,15 @@ class OverlayManager {
       _rebuild();
       return;
     }
+    // With no overlay to insert into, create nothing: an entry that was never
+    // inserted would count as showing, and hiding it would call
+    // `OverlayEntry.remove()` on an entry that has no overlay, which throws.
+    // The next update tries again.
+    final overlay = overlayState;
+    if (overlay == null) return;
     // Create the overlay.
     _overlayEntry = OverlayEntry(builder: overlayBuilder);
-    overlayState?.insert(_overlayEntry!);
+    overlay.insert(_overlayEntry!);
   }
 
   /// Removes and clears the current overlay entry.
